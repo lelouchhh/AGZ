@@ -1,19 +1,18 @@
 package main
 
 import (
+	"AGZ/pkg/handler"
 	"AGZ/pkg/repository"
 	"AGZ/pkg/service"
 	"AGZ/pkg/structures"
 	"context"
-	"os"
-	"os/signal"
-	"syscall"
-
-	"AGZ/pkg/handler"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 // @title           API
@@ -63,7 +62,6 @@ func main() {
 	}()
 
 	logrus.Print("API started")
-
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit

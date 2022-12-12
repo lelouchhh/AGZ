@@ -6,6 +6,16 @@ import (
 	"time"
 )
 
+type UserPersonalInfo struct {
+	Access       string `json:"access"`
+	First        string `json:"first_name" db:"first_name"`
+	Second       string `json:"second_name" db:"second_name"`
+	Last         string `json:"last_name" db:"last_name"`
+	Email        string `json:"email" db:"email"`
+	Phone        string `json:"phone_number" db:"phone_number"`
+	Organization string `json:"organization" db:"organization"`
+	INN          string `json:"INN" db:"inn"`
+}
 type User struct {
 	Login    string
 	Email    string
@@ -43,6 +53,8 @@ type emailReg struct {
 type purchase struct {
 	Access   string `json:"access"`
 	Purchase string `json:"purchase"`
+	Note     string `json:"custom_note"`
+	Status   string `json:"custom_status"`
 }
 type link struct {
 	Access string `json:"access"`
@@ -121,6 +133,8 @@ type Purchases struct {
 	FirstName            string `db:"customer_contact_first_name"`
 	MiddleName           string `db:"customer_contact_middle_name"`
 	ProfileId            string `db:"profile_id"`
+	CustomNote           string `db:"custom_note"`
+	CustomStatus         string `json:"custom_status" db:"custom_status"`
 }
 type deliveryPlace struct {
 	KladrCode     string `json:"KladrCode"`

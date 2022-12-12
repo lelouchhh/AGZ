@@ -1,0 +1,4 @@
+make.sh
+cmd/exec
+cmd/emailConfirm
+pkg/.env

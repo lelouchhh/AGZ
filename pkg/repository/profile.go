@@ -46,6 +46,7 @@ func (r *ProfilePostgres) GetBasket(user structures.Params) ([]structures.Purcha
 		return nil, err
 	}
 	QueryPurchases := fmt.Sprintf("select * from purchase.t_entity inner join custom.t_basket on custom.t_basket.entity_id::text=t_entity.entity_id::text where t_basket.profile_id::text='%s';", id)
+
 	fmt.Println(QueryPurchases)
 	rows, err := r.db.Queryx(QueryPurchases)
 	for rows.Next() {
@@ -118,7 +119,7 @@ func (r *ProfilePostgres) AddLink(user structures.Params) error {
 	return err
 }
 func (r *ProfilePostgres) RemoveLink(user structures.Params) error {
-	query := fmt.Sprintf("call custom.remove_link('%s', '%s')", user.Link.Link, user.Link.Access)
+	query := fmt.Sprintf("call custom.remove_link('%s', '%s')", user.Link.Name, user.Link.Access)
 	fmt.Println(query)
 	_, err := r.db.Exec(query)
 	if err != nil {
@@ -144,4 +145,72 @@ func (r *ProfilePostgres) GetLinksBasket(user structures.Params) ([]structures.L
 	}
 
 	return links, err
+}
+
+func (r *ProfilePostgres) AddCustomNote(user structures.Params) error {
+	query := fmt.Sprintf("select t.profile_id from custom.t_profile as t where t.user_id = (select t2.user_id from auth.t_auth_session as t2 where t2.access_token::text = '%s');", user.Purchase.Access)
+	var row string
+	err := r.db.Get(&row, query)
+	if err != nil {
+		return err
+	}
+	query = fmt.Sprintf("update custom.t_basket set custom_note = '%s' where entity_id = '%s' and profile_id = '%s';", user.Purchase.Note, user.Purchase.Purchase, row)
+	_, err = r.db.Exec(query)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func (r *ProfilePostgres) AddCustomStatus(user structures.Params) error {
+	query := fmt.Sprintf("select t.profile_id from custom.t_profile as t where t.user_id = (select t2.user_id from auth.t_auth_session as t2 where t2.access_token::text = '%s');", user.Purchase.Access)
+	var row string
+	err := r.db.Get(&row, query)
+	if err != nil {
+		return err
+	}
+	query = fmt.Sprintf("update custom.t_basket set custom_note = '%s' where entity_id = '%s' and profile_id = '%s';", user.Purchase.Note, user.Purchase.Purchase, row)
+	_, err = r.db.Exec(query)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+// GetProfileInfo
+func (r *ProfilePostgres) GetProfileInfo(token structures.Tokens) (structures.UserPersonalInfo, error) {
+	query := fmt.Sprintf("select t.profile_id from custom.t_profile as t where t.user_id = (select t2.user_id from auth.t_auth_session as t2 where t2.access_token::text = '%s');", token.Access)
+	var row string
+	err := r.db.Get(&row, query)
+	if err != nil {
+		return structures.UserPersonalInfo{}, err
+	}
+	perosnalQuery := fmt.Sprintf("select first_name, second_name, last_name, email, phone_number, organization, inn from custom.t_profile where profile_id = '%s'", row)
+	rows, err := r.db.Queryx(perosnalQuery)
+	if err != nil {
+		return structures.UserPersonalInfo{}, err
+	}
+	var userData structures.UserPersonalInfo
+	for rows.Next() {
+		fmt.Println(rows.Rows)
+		err = rows.StructScan(&userData)
+	}
+	return userData, err
+
+}
+func (r *ProfilePostgres) AddProfileInfo(profile structures.UserPersonalInfo) error {
+	query := fmt.Sprintf("select t.profile_id from custom.t_profile as t where t.user_id = (select t2.user_id from auth.t_auth_session as t2 where t2.access_token::text = '%s');", profile.Access)
+	var row string
+	err := r.db.Get(&row, query)
+	if err != nil {
+		return err
+	}
+	fmt.Println(row)
+	query = fmt.Sprintf("UPDATE custom.t_profile SET first_name = COALESCE('%s', first_name), last_name = COALESCE('%s', last_name),  second_name = COALESCE('%s', second_name),  organization = COALESCE('%s', organization),  email = COALESCE('%s', email),  phone_number = COALESCE('%s', phone_number),  inn = COALESCE('%s', inn)where profile_id::text = '%s'", profile.First, profile.Last, profile.Second, profile.Organization, profile.Email, profile.Phone, profile.INN, row)
+	fmt.Println(query)
+	_, err = r.db.Exec(query)
+	if err != nil {
+		return err
+	}
+	return err
 }

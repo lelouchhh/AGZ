@@ -6,6 +6,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 	"os/exec"
+	"strings"
 )
 
 func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
@@ -34,6 +35,7 @@ func (r *AuthPostgres) ResetUserEmailPass(user structures.Params) error {
 	return err
 }
 func (r *AuthPostgres) RegisterUserEmail(user structures.Params) error {
+	user.EmailReg.Email = strings.ToLower(user.EmailReg.Email)
 	query := fmt.Sprintf("call auth.set_reg_email('%s', '%s', '%s')", user.EmailReg.Login, user.EmailReg.Pass, user.EmailReg.Email)
 	_, err := r.db.Exec(query)
 	if err != nil {

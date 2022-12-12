@@ -91,3 +91,60 @@ func (h *Handler) RemoveLink(c *gin.Context) {
 		"data":    "",
 	})
 }
+
+func (h *Handler) AddCustomNote(c *gin.Context) {
+	var user structures.Params
+	c.BindJSON(&user.Purchase)
+	err := h.services.Profile.AddCustomNote(user)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"success": "1",
+		"message": "OK",
+		"data":    "",
+	})
+}
+func (h *Handler) AddCustomStatus(c *gin.Context) {
+	var user structures.Params
+	c.BindJSON(&user.Purchase)
+	err := h.services.Profile.AddCustomStatus(user)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"success": "1",
+		"message": "OK",
+		"data":    "",
+	})
+}
+func (h *Handler) GetProfileInfo(c *gin.Context) {
+	var Access structures.Tokens
+	c.BindJSON(&Access)
+	data, err := h.services.Profile.GetProfileInfo(Access)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"success": "1",
+		"message": "OK",
+		"data":    data,
+	})
+}
+func (h *Handler) AddProfileInfo(c *gin.Context) {
+	var profile structures.UserPersonalInfo
+	c.BindJSON(&profile)
+	err := h.services.Profile.AddProfileInfo(profile)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"success": "1",
+		"message": "OK",
+		"data":    "",
+	})
+}

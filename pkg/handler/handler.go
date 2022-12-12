@@ -2,6 +2,7 @@ package handler
 
 import (
 	"AGZ/pkg/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -42,12 +43,20 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		profile.POST("/remove_link", h.RemoveLink)
 		profile.POST("/add_link", h.AddLink)
 		profile.POST("/get_link_basket", h.GetLinkBasket)
+		profile.POST("/add_custom_note", h.AddCustomNote)
+		profile.POST("/add_custom_status", h.AddCustomStatus)
+		profile.POST("/get_profile_info", h.GetProfileInfo)
+		profile.POST("/add_profile_info", h.AddProfileInfo)
 	}
 	//token := router.Group("/token")
 	//{
 	//	token.POST("/action_access", h.ActionUserAccess)
 	//	token.POST("/action_refresh", h.ActionUserRefresh)
 	//}
+	err := router.RunTLS(":8080", "/etc/letsencrypt/live/www.969975-cv27771.tmweb.ru/fullchain.pem", "/etc/letsencrypt/live/www.969975-cv27771.tmweb.ru/privkey.pem")
+	if err != nil {
+		fmt.Println(err)
+	}
 	return router
 }
 

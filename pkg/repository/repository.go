@@ -20,6 +20,10 @@ type Profile interface {
 	GetLinksBasket(user structures.Params) ([]structures.Links, error)
 	AddLink(user structures.Params) error
 	RemoveLink(user structures.Params) error
+	AddCustomNote(user structures.Params) error
+	AddCustomStatus(user structures.Params) error
+	GetProfileInfo(token structures.Tokens) (structures.UserPersonalInfo, error)
+	AddProfileInfo(user structures.UserPersonalInfo) error
 }
 
 type Repository struct {
